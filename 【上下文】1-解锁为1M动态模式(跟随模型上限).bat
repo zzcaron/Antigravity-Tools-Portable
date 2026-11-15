@@ -14,11 +14,12 @@ if not exist "%NODE_EXE%" (
     set "NODE_EXE=node"
 )
 
-echo [1/3] 检查客户端运行状态...
+echo [1/3] 检查客户端与后端内核运行状态...
 tasklist /FI "IMAGENAME eq Antigravity.exe" 2>NUL | find /I /N "Antigravity.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     echo [提示] 检测到 Antigravity 正在运行，正在关闭以更新后端核心...
-    taskkill /F /IM Antigravity.exe >nul 2>&1
+    taskkill /F /T /IM Antigravity.exe >nul 2>&1
+    taskkill /F /IM language_server.exe >nul 2>&1
     timeout /t 2 /nobreak >nul
 )
 
@@ -31,7 +32,7 @@ if "%ERRORLEVEL%" neq "0" (
 )
 
 echo.
-echo [3/3] 正在启动 Antigravity 客户端...
+echo [3/3] 正在启动客户端并同步前端组件...
 set "AGY_EXE=%LOCALAPPDATA%\Programs\antigravity\Antigravity.exe"
 if not exist "%AGY_EXE%" set "AGY_EXE=%LOCALAPPDATA%\Programs\Antigravity\Antigravity.exe"
 if exist "%AGY_EXE%" (
