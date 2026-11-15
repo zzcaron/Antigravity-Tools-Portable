@@ -14,13 +14,9 @@ if not exist "%NODE_EXE%" (
     set "NODE_EXE=node"
 )
 
-echo [准备] 检查客户端运行状态...
-tasklist /FI "IMAGENAME eq Antigravity.exe" 2>NUL | find /I /N "Antigravity.exe">NUL
-if "%ERRORLEVEL%"=="0" (
-    echo [提示] 检测到 Antigravity 正在运行，正在关闭以进行整包补丁注入...
-    taskkill /F /IM Antigravity.exe >nul 2>&1
-    timeout /t 2 /nobreak >nul
-)
+echo [准备] 正在确保客户端完全退出以进行整包补丁注入...
+taskkill /F /T /IM Antigravity.exe >nul 2>&1
+timeout /t 1 /nobreak >nul
 
 echo.
 echo ======================================================

@@ -188,12 +188,17 @@
             if (window.contextMeterAPI && typeof window.contextMeterAPI.getContextUnlockStatus === 'function') {
                 window.contextMeterAPI.getContextUnlockStatus().then(res => {
                     if (res && res.ok && res.data) {
+                        let targetLimit = null;
                         if (res.data.configuredMode === 'fixed' && res.data.configuredLimitTokens > 0) {
-                            _dynamicUnlockedLimit = res.data.configuredLimitTokens;
+                            targetLimit = res.data.configuredLimitTokens;
                         } else if (res.data.configuredMode === 'dynamic') {
-                            _dynamicUnlockedLimit = 1000000;
+                            targetLimit = 1000000;
                         } else if (res.data.configuredMode === 'default') {
-                            _dynamicUnlockedLimit = null;
+                            targetLimit = null;
+                        }
+                        if (_dynamicUnlockedLimit !== targetLimit) {
+                            _dynamicUnlockedLimit = targetLimit;
+                            try { sessionCache.clear(); } catch(e) {}
                         }
                     }
                 }).catch(() => {});
@@ -201,6 +206,7 @@
         } catch (e) {}
     }
     syncUnlockedLimitFromHost();
+    setInterval(syncUnlockedLimitFromHost, 2500);
 
     // 根据模型 ID 或显示名称动态获取官方压缩上限 (支持联动解锁上限)
     function getContextLimitForModel(modelId, label) {

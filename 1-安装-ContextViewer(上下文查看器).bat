@@ -13,13 +13,9 @@ if not exist "%NODE_EXE%" (
     set "NODE_EXE=node"
 )
 
-echo [1/3] 检查客户端运行状态...
-tasklist /FI "IMAGENAME eq Antigravity.exe" 2>NUL | find /I /N "Antigravity.exe">NUL
-if "%ERRORLEVEL%"=="0" (
-    echo [提示] 检测到 Antigravity 正在运行，正在关闭以完成补丁注入...
-    taskkill /F /IM Antigravity.exe >nul 2>&1
-    timeout /t 2 /nobreak >nul
-)
+echo [1/3] 正在确保客户端完全退出以完成补丁注入...
+taskkill /F /T /IM Antigravity.exe >nul 2>&1
+timeout /t 1 /nobreak >nul
 
 echo [2/3] 正在注入 Context Viewer 组件...
 "%NODE_EXE%" "%SCRIPT_DIR%packages\viewer\cli.js" install

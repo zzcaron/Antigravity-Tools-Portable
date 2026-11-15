@@ -14,15 +14,12 @@ if not exist "%NODE_EXE%" (
     set "NODE_EXE=node"
 )
 
-echo [1/3] 检查客户端运行状态...
-tasklist /FI "IMAGENAME eq Antigravity.exe" 2>NUL | find /I /N "Antigravity.exe">NUL
-if "%ERRORLEVEL%"=="0" (
-    echo [提示] 检测到 Antigravity 正在运行，正在关闭以还原后端核心...
-    taskkill /F /IM Antigravity.exe >nul 2>&1
-    timeout /t 2 /nobreak >nul
-)
+echo [1/3] 正在确保客户端与后台推理内核完全退出...
+taskkill /F /T /IM Antigravity.exe >nul 2>&1
+taskkill /F /IM language_server.exe >nul 2>&1
+timeout /t 1 /nobreak >nul
 
-echo [2/3] 正在还原为官方英文标题提示词...
+echo [2/3] 正在恢复官方英文标题提示词...
 "%NODE_EXE%" "%SCRIPT_DIR%packages\viewer\cli.js" enhance --title off
 if "%ERRORLEVEL%" neq "0" (
     echo.
