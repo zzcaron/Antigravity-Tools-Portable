@@ -181,8 +181,33 @@
         return false;
     }
 
-    // 根据模型 ID 或显示名称动态获取官方压缩上限
+    // 动态同步上下文解锁模式与上限 (支持与 Context Viewer 解锁工具联动)
+    let _dynamicUnlockedLimit = null;
+    function syncUnlockedLimitFromHost() {
+        try {
+            if (window.contextMeterAPI && typeof window.contextMeterAPI.getContextUnlockStatus === 'function') {
+                window.contextMeterAPI.getContextUnlockStatus().then(res => {
+                    if (res && res.ok && res.data) {
+                        if (res.data.configuredMode === 'fixed' && res.data.configuredLimitTokens > 0) {
+                            _dynamicUnlockedLimit = res.data.configuredLimitTokens;
+                        } else if (res.data.configuredMode === 'dynamic') {
+                            _dynamicUnlockedLimit = 1000000;
+                        } else if (res.data.configuredMode === 'default') {
+                            _dynamicUnlockedLimit = null;
+                        }
+                    }
+                }).catch(() => {});
+            }
+        } catch (e) {}
+    }
+    syncUnlockedLimitFromHost();
+
+    // 根据模型 ID 或显示名称动态获取官方压缩上限 (支持联动解锁上限)
     function getContextLimitForModel(modelId, label) {
+        syncUnlockedLimitFromHost();
+        if (_dynamicUnlockedLimit && _dynamicUnlockedLimit > 0) {
+            return _dynamicUnlockedLimit;
+        }
         const combined = ((modelId || '') + ' ' + (label || '')).toUpperCase();
         if (combined.includes('GPT_OSS') || combined.includes('GPT-OSS') || combined.includes('120B')) {
             return GPT_OSS_LIMIT;
