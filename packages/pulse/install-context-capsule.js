@@ -1308,7 +1308,8 @@ function prepareTargetAsarBuffer(asarPath, origBuf, payloadRaw, options) {
         const asarBakPath = `${asarPath}.orig.bak`;
         if (fs.existsSync(asarBakPath)) {
             const bakStatus = checkAsarStatusFast(asarBakPath);
-            if (!bakStatus.error && !bakStatus.installed) {
+            const origHasChinese = origBuf && (origBuf.includes('/* === AGY_CHINESE_START === */') || origBuf.includes('// --- Antigravity Chinese Localization Injection Start ---'));
+            if (!bakStatus.error && !bakStatus.installed && !origHasChinese) {
                 const bakBuf = fs.readFileSync(asarBakPath);
                 return { patchedBuf: bakBuf, restoredFromOrigBak: true };
             }

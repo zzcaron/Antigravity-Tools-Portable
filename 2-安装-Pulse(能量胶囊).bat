@@ -21,6 +21,7 @@ if "%ERRORLEVEL%" neq "0" (
     echo [错误] Pulse 安装失败，请检查上方日志。
     goto END
 )
+"%NODE_EXE%" "%SCRIPT_DIR%bin\sync-pulse-limit.js" >nul 2>&1
 
 echo.
 echo ======================================================

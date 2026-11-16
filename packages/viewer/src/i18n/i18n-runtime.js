@@ -708,7 +708,7 @@
       reconnectObserver();
     }
 
-    // 低频保底扫描：彻底阻断 50~60Hz 无限自旋死循环，改为每 15 秒配合 requestIdleCallback 执行一次低频保底扫描
+    // 低频保底扫描：彻底阻断 50～60Hz 无限自旋死循环，改为每 15 秒配合 requestIdleCallback 执行一次低频保底扫描
     var idleScanScheduled = false;
     function scheduleIdleScan() {
       if (idleScanScheduled) return;

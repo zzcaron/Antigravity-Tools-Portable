@@ -26,6 +26,7 @@ if "%ERRORLEVEL%" neq "0" (
     echo [错误] 还原失败，请检查上方日志。
     goto END
 )
+"%NODE_EXE%" "%SCRIPT_DIR%bin\sync-pulse-limit.js" 256000 >nul 2>&1
 
 echo.
 echo [3/3] 正在启动客户端并同步前端组件...
